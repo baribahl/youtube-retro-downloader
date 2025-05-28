@@ -7,8 +7,7 @@
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"
     }
-  },
-  "postCreateCommand": "npm install && pip install yt-dlp",
+  },  "postCreateCommand": "npm install && pip install yt-dlp && echo '🎮 Codespace ready! Run: npm run backend' && echo '📋 Setup guide: cat CODESPACE_BACKEND_SETUP.md'",
   "forwardPorts": [3000, 3001],
   "portsAttributes": {
     "3000": {

@@ -4,7 +4,7 @@ import type { VideoInfo, PlaylistInfo, DownloadFormat } from '../types.ts';
 
 // Dynamic API base - works for both development and production
 const API_BASE = process.env.NODE_ENV === 'production' 
-  ? '/api'  // Relative path for production
+  ? (import.meta.env.VITE_BACKEND_URL || 'https://your-codespace-name-3001.github.dev/api')  // Codespace backend URL
   : 'http://localhost:3001/api';
 
 // Check if backend is available

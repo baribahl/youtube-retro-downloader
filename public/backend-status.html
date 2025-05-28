@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 YouTube Retro Downloader - Backend Status</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px #00ff0050;
+        }
+        h1 {
+            color: #ff00ff;
+            text-align: center;
+            text-shadow: 0 0 10px #ff00ff;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #000;
+            border: 1px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success { color: #00ff00; }
+        .info { color: #00ffff; }
+        .warning { color: #ffff00; }
+        .endpoint {
+            background: #2a2a2a;
+            border-left: 4px solid #ff00ff;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        code {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00ffff;
+        }
+        .glow {
+            text-shadow: 0 0 5px currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="glow">🎮 YouTube Retro Downloader Backend</h1>
+        
+        <div class="status">
+            <div class="success">✅ Backend Server Status: <span id="status">Checking...</span></div>
+            <div class="info">🌐 Server URL: <span id="server-url">Loading...</span></div>
+            <div class="info">⏰ Last Check: <span id="timestamp">-</span></div>
+        </div>
+
+        <div class="endpoint">
+            <h3 class="info glow">📡 API Endpoints</h3>
+            <p><strong>Test Connection:</strong> <code>GET /api/test</code></p>
+            <p><strong>Video Info:</strong> <code>POST /api/video-info</code></p>
+            <p><strong>Download:</strong> <code>POST /api/download</code></p>
+            <p><strong>Download Status:</strong> <code>GET /api/download-status/:id</code></p>
+        </div>
+
+        <div class="endpoint">
+            <h3 class="warning glow">⚙️ Setup Instructions</h3>
+            <ol>
+                <li>Make sure this Codespace is running</li>
+                <li>Set port <code>3001</code> to <strong>Public</strong> in VS Code PORTS tab</li>
+                <li>Copy your Codespace URL and update <code>.env.production</code></li>
+                <li>Rebuild and deploy your GitHub Pages frontend</li>
+            </ol>
+        </div>
+
+        <div class="endpoint">
+            <h3 class="info glow">🔗 Related Links</h3>
+            <p>📄 <a href="https://github.com/baribahl/youtube-retro-downloader" style="color: #00ffff;">GitHub Repository</a></p>
+            <p>🌐 <a href="https://baribahl.github.io/youtube-retro-downloader/" style="color: #00ffff;">GitHub Pages Frontend</a></p>
+            <p>📋 <a href="/CODESPACE_BACKEND_SETUP.md" style="color: #00ffff;">Setup Guide</a></p>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                document.getElementById('status').textContent = 'Running ✅';
+                document.getElementById('status').className = 'success';
+                document.getElementById('server-url').textContent = window.location.origin;
+                document.getElementById('timestamp').textContent = new Date().toLocaleString();
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error ❌';
+                document.getElementById('status').className = 'warning';
+                document.getElementById('timestamp').textContent = new Date().toLocaleString();
+            }
+        }
+
+        // Check status on load and every 30 seconds
+        checkStatus();
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>

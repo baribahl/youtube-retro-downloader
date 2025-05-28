@@ -64,9 +64,26 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+// CORS configuration for cross-origin requests (GitHub Pages to Codespace)
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000', 
+    'https://*.github.io',
+    'https://baribahl.github.io'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use('/downloads', express.static('downloads'));
+app.use(express.static('public')); // Serve static files including backend-status.html
+
+// Backend status page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'backend-status.html'));
+});
 
 // Simple test endpoint for connectivity testing
 app.get('/api/test', (req, res) => {
