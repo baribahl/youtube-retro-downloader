@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import UrlInput from './components/UrlInput.tsx';
 import VideoPreview from './components/VideoPreview.tsx';
@@ -6,7 +6,7 @@ import DownloadOptions from './components/DownloadOptions.tsx';
 import DownloadProgress from './components/DownloadProgress.tsx';
 import CookieManager from './components/CookieManager.tsx';
 import type { VideoInfo, DownloadFormat } from './types';
-import { parseYouTubeUrl, fetchVideoInfo, fetchPlaylistInfo, downloadVideo } from './utils/youtube.ts';
+import { parseYouTubeUrl, fetchVideoInfo, fetchPlaylistInfo, downloadVideo, checkBackendAvailability } from './utils/youtube.ts';
 
 function App() {
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
@@ -17,6 +17,21 @@ function App() {
   const [cookies, setCookies] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
+
+  // Check backend availability on component mount
+  useEffect(() => {
+    const checkBackend = async () => {
+      const isAvailable = await checkBackendAvailability();
+      setBackendAvailable(isAvailable);
+      
+      if (!isAvailable && window.location.hostname.includes('github.io')) {
+        setError('ℹ️ You\'re viewing the frontend demo on GitHub Pages. For full download functionality, deploy to a platform with Node.js backend support (Railway, Heroku, DigitalOcean).');
+      }
+    };
+    
+    checkBackend();
+  }, []);
 
   const handleUrlSubmit = async (url: string) => {
     setIsLoading(true);
@@ -115,6 +130,20 @@ function App() {
         <h1 className="neon-text">RETRO TUBE DOWNLOADER</h1>
       </header>
 
+      {/* GitHub Pages Notice */}
+      {backendAvailable === false && window.location.hostname.includes('github.io') && (
+        <div className="retro-panel" style={{ borderColor: '#ff6b00', backgroundColor: 'rgba(255, 107, 0, 0.1)' }}>
+          <h3>ℹ️ GitHub Pages Demo Mode</h3>
+          <p>You're viewing the frontend interface on GitHub Pages. For full download functionality, deploy to:</p>
+          <div style={{ marginTop: '10px' }}>
+            <strong>Recommended platforms:</strong> Railway, Heroku, DigitalOcean, Render
+          </div>
+          <div style={{ marginTop: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+            This demo shows the complete UI but requires a Node.js backend for actual downloads.
+          </div>
+        </div>
+      )}
+
       <div className="retro-panel">
         <h2>🔗 Video URL Input</h2>
         <UrlInput onSubmit={handleUrlSubmit} isLoading={isLoading} />
@@ -122,6 +151,9 @@ function App() {
         {/* Quick Test Buttons */}
         <div className="test-urls">
           <h4>🧪 Quick Test URLs:</h4>
+          <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+            Backend Status: {backendAvailable === null ? '🟡 Checking...' : backendAvailable ? '🟢 Connected' : '🔴 Unavailable'}
+          </div>
           <div className="test-buttons">
             <button 
               className="retro-button secondary small"
