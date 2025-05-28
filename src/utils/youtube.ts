@@ -7,6 +7,17 @@ const API_BASE = process.env.NODE_ENV === 'production'
   ? '/api'  // Relative path for production
   : 'http://localhost:3001/api';
 
+// Check if backend is available
+export async function checkBackendAvailability(): Promise<boolean> {
+  try {
+    const response = await axios.get(`${API_BASE}/test`, { timeout: 5000 });
+    return response.status === 200;
+  } catch (error) {
+    console.warn('Backend not available:', error);
+    return false;
+  }
+}
+
 // Extract video ID from various YouTube URL formats
 export function extractVideoId(url: string): string | null {
   const patterns = [
